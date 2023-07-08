@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Note App</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.12/handlebars.min.js" integrity="sha256-qlku5J3WO/ehJpgXYoJWC2px3+bZquKChi4oIWrAKoI=" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="./styles/index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com"> 
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat&family=Lato:wght@400;700&family=Rubik&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+
+
+    <script id="entry-template" type="text/x-handlebars-template">
+        {{#each this}}
+        <li class="todo" id='{{id}}'>
+            <div class="todolist">
+                <div class="list col-content">
+                    <div class="title"><h2>{{title}}</h2></div>
+                    <div class="description">{{filterDesc}}</div>
+                    <div class="creatdate">{{created}}</div>
+                </div>
+                <div class="list col-date">
+                    <div class="datum">{{duedate}}</div>
+                </div>
+                <div class="list col-imp">
+                    <div class="importance">
+                        <p>
+                        {{#times prio}}
+                        &#9733
+                        {{/times}}
+                        </p>
+                    </div>
+                </div>
+                <div class="list finished col-status">
+                    <div class="state">{{state}}</div>
+                </div>
+                <div class="list col-edit">
+                    <div>
+                        <button class="edit" id="edit-{{id}}"><i class="uil uil-pen"></i></button>
+                    </div>
+                </div>
+                <div class="list col-delete">
+                    <div>
+                        <button class="edit" id="delete-{{id}}"><i class="uil uil-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+        </li>
+        <div id="createdate">{{createdate}}</div>
+        {{/each}}
+    </script>
+
+</head>
+
+
+
+<body>
+    <header>
+        <div id="icon"><i class="uil uil-notes"></i></div>
+        <h1>To do list</h1>
+        <div id="darkmode"><i class="uil uil-toggle-on"></i></div>
+    </header>
+    <div class="popup-box">
+        <div class="popup">
+            <div id="header">
+                <h2>Neuer Eintrag</h2>
+                <i class="uil uil-times"></i>
+            </div>
+            <form id="create-note-form">
+                <div class="row feld titel">
+                    <label for="titel">Titel</label>
+                    <input id="titel" type="text" spellcheck="false" required />
+                </div>
+                <div class="row feld top">
+                    <label for="beschreibung">Beschreibung</label>
+                    <textarea id="beschreibung" spellcheck="false" required></textarea>
+                </div>
+                <div class="row feld datum">
+                    <label for="datum">Stichtag</label>
+                    <input type="date" id="datum" name="date" required />
+                </div>
+                <div class="row feld prio">
+                    <label for="create-importance">Dringlichkeit</label>
+                    <select name="importance" id="create-importance" required>
+                        <option value="1">Keine</option>
+                        <option value="2">Niedrig</option>
+                        <option value="3">Mittel</option>
+                        <option value="4">Hoch</option>
+                        <option value="5">Sehr hoch</option>
+                    </select>
+                </div>
+                <div class="row feld status">
+                    <label for="add-status">Status</label>
+                    <input type="checkbox" id="add-status" name="status"/>
+                </div>
+                <button type="submit" class="button active" id="create-note">Eintrag hinzufügen</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="popup-edit" class="popup-box">
+        <div class="popup">
+            <div id="header">
+                <h2>Eintrag bearbeiten</h2>
+                <i id="close-popup-edit" class="uil uil-times"></i>
+            </div>
+            <form id="editForm">
+                <input value="" id="edit-id" hidden="hidden">
+                <div class="row feld titel">
+                    <label for="titel-edit">Titel</label>
+                    <input id="titel-edit" type="text" spellcheck="false" required />
+                </div>
+                <div class="row feld top">
+                    <label for="beschreibung-edit">Beschreibung</label>
+                    <textarea id="beschreibung-edit" spellcheck="false" required></textarea>
+                </div>
+                <div class="row feld datum">
+                    <label for="datum-edit">Stichtag</label>
+                    <input type="date" id="datum-edit" name="datum-edit" required />
+                </div>
+                <div class="row feld prio">
+                    <label for="importance-edit">Dringlichkeit</label>
+                    <select name="importance-edit" id="importance-edit" required>
+                        <option value="1">Keine</option>
+                        <option value="2">Niedrig</option>
+                        <option value="3">Mittel</option>
+                        <option value="4">Hoch</option>
+                        <option value="5">Sehr hoch</option>
+                    </select>
+                </div>
+                <div class="row feld status">
+                    <label for="status-edit">Status</label>
+                    <input type="checkbox" id="status-edit" name="status"/>
+                </div>
+                <button type="submit" class="button active" id="note-edit">Eintrag bearbeiten</button>
+            </form>
+        </div>
+    </div>
+    
+    <div id="content">
+        <div class="add-box">
+            <button id="create" class="button active new" type="button">Neuer Eintrag</button>
+        </div>
+        <div id="filter">
+            <button id="sort-title" class="filter" type="button">Name <i id="sortTitleIcon" class="uil uil-sort"></i></button>
+            <button id="sort-date" class="filter col-datum" type="button">Stichtag <i id="sortDateIcon" class="uil uil-sort"></i></button>
+            <button id="sort-prio" class="filter" type="button">Priorität <i id="sortPrioIcon" class="uil uil-sort"></i></button>
+            <button id="sort-filter"  class="filter" type="button">Status <i  class="uil uil-sort"></i></button>
+            <div></div>
+            <button id="reset" class="filter" type="button"><i class="uil uil-history"></i></button>
+        </div>
+        <ul id="MeineTodos"></ul>
+    </div>
+    <div id="copyright">© Colette Guentensperger</div>
+
+    <script type="module" src="controllers/MainController.js"></script>
+
+</body>
+
+</html>
